@@ -1,0 +1,41 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+int main() {
+    int n = 5; 
+    int tracks[] = {55, 58, 60, 70, 18}; 
+    int head = 50; 
+    int direction = 1;
+    int totalHeadMovement = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (tracks[j] > tracks[j + 1]) {
+                int temp = tracks[j];
+                tracks[j] = tracks[j + 1];
+                tracks[j + 1] = temp;
+            }
+        }
+    }
+    int i;
+    for (i = 0; i < n; i++) {
+        if (tracks[i] > head)
+            break;
+    }
+    int currentTrack = i;
+    while (currentTrack < n && currentTrack >= 0) {
+        totalHeadMovement += abs(head - tracks[currentTrack]);
+        head = tracks[currentTrack];
+        currentTrack += direction;
+    }
+    direction = -direction;
+    currentTrack = i - 1;
+    while (currentTrack < n && currentTrack >= 0) {
+        totalHeadMovement += abs(head - tracks[currentTrack]);
+        head = tracks[currentTrack];
+        currentTrack += direction;
+    }
+    float averageHeadMovement = (float) totalHeadMovement / n;
+    printf("Average Head Movement: %.2f\n", averageHeadMovement);
+    
+    return 0;
+}
