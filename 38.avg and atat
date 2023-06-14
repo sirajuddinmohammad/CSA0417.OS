@@ -1,0 +1,65 @@
+#include <stdio.h>
+
+struct Process {
+    int processID;
+    int burstTime;
+    int waitingTime;
+    int turnaroundTime;
+};
+
+void computeWaitingTime(struct Process processes[], int n) {
+    int totalWaitingTime = 0;
+    int currentTime = 0;
+
+    for (int i = 0; i < n; i++) {
+        processes[i].waitingTime = currentTime;
+        currentTime += processes[i].burstTime;
+        totalWaitingTime += processes[i].waitingTime;
+    }
+
+    int averageWaitingTime = totalWaitingTime / n;
+    printf("Average Waiting Time: %d\n", averageWaitingTime);
+}
+
+void computeTurnaroundTime(struct Process processes[], int n) {
+    int totalTurnaroundTime = 0;
+
+    for (int i = 0; i < n; i++) {
+        processes[i].turnaroundTime = processes[i].waitingTime + processes[i].burstTime;
+        totalTurnaroundTime += processes[i].turnaroundTime;
+    }
+
+    int averageTurnaroundTime = totalTurnaroundTime / n;
+    printf("Average Turnaround Time: %d\n", averageTurnaroundTime);
+}
+
+void SJFScheduling(struct Process processes[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (processes[j].burstTime > processes[j + 1].burstTime) {
+                struct Process temp = processes[j];
+                processes[j] = processes[j + 1];
+                processes[j + 1] = temp;
+            }
+        }
+    }
+
+    computeWaitingTime(processes, n);
+    computeTurnaroundTime(processes, n);
+}
+
+int main() {
+    struct Process processes[3];
+    processes[0].processID = 0;
+    processes[0].burstTime = 2;
+
+    processes[1].processID = 1;
+    processes[1].burstTime = 4;
+
+    processes[2].processID = 2;
+    processes[2].burstTime = 8;
+
+    SJFScheduling(processes, 3);
+
+    return 0;
+}
