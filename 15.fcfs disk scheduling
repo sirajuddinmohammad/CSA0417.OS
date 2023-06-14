@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define MAX_TRACKS 100
+
+int abs_diff(int a, int b)
+{
+    return abs(a - b);
+}
+
+int main()
+{
+    int tracks[MAX_TRACKS];
+    int num_tracks;
+    int initial_position;
+    int total_head_movement = 0;
+
+    printf("Enter the number of tracks: ");
+    scanf("%d", &num_tracks);
+
+    printf("Enter the track positions: ");
+    for (int i = 0; i < num_tracks; i++)
+    {
+        scanf("%d", &tracks[i]);
+    }
+
+    printf("Enter the initial head position: ");
+    scanf("%d", &initial_position);
+
+  
+    int current_position = initial_position;
+    printf("\nSequence of disk access:\n%d", current_position);
+
+    for (int i = 0; i < num_tracks; i++)
+    {
+        total_head_movement += abs_diff(current_position, tracks[i]);
+        current_position = tracks[i];
+        printf(" -> %d", current_position);
+    }
+
+    printf("\n\nTotal head movement: %d\n", total_head_movement);
+    float average_head_movement = (float)total_head_movement / num_tracks;
+    printf("Average head movement: %.2f\n", average_head_movement);
+
+    return 0;
+}
