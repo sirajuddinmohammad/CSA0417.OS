@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int abs_diff(int a, int b) {
+    return abs(a - b);
+}
+
+int find_closest_track(int tracks[], int n, int current_pos) {
+    int min_diff = abs_diff(tracks[0], current_pos);
+    int closest_track = tracks[0];
+    
+    for (int i = 1; i < n; i++) {
+        int diff = abs_diff(tracks[i], current_pos);
+        if (diff < min_diff) {
+            min_diff = diff;
+            closest_track = tracks[i];
+        }
+    }
+    
+    return closest_track;
+}
+
+int main() {
+    int tracks[] = {55, 58, 60, 70, 18};
+    int n = sizeof(tracks) / sizeof(tracks[0]);
+    
+    int head_movement = 0;
+    int current_pos = 50;  // Assuming the head starts at track 50
+    
+    printf("Track order: %d ", current_pos);
+    
+    for (int i = 0; i < n; i++) {
+        int next_track = find_closest_track(tracks, n, current_pos);
+        head_movement += abs_diff(current_pos, next_track);
+        current_pos = next_track;
+        tracks[current_pos] = -1;  // Mark the track as visited
+        printf("%d ", current_pos);
+    }
+    
+    printf("\nAverage head movement: %.2f\n", (float)head_movement / n);
+    
+    return 0;
+}
