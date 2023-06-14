@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define NUM_BLOCKS 16
+#define BLOCK_SIZE 1024
+#define INODE_BLOCKS 8
+
+bool is_block_free(int block_bitmap[], int block_num) {
+    return (block_bitmap[block_num] == 0);
+}
+
+void allocate_blocks(int block_bitmap[], int start_block, int num_blocks) {
+    for (int i = start_block; i < start_block + num_blocks; i++) {
+        block_bitmap[i] = 1; // Mark the block as allocated
+    }
+}
+
+int find_contiguous_blocks(int block_bitmap[], int num_blocks) {
+    int start_block = -1;
+    int count = 0;
+
+    for (int i = INODE_BLOCKS; i < NUM_BLOCKS; i++) {
+        if (is_block_free(block_bitmap, i)) {
+            if (start_block == -1) {
+                start_block = i;
+            }
+            count++;
+        } else {
+            start_block = -1;
+            count = 0;
+        }
+
+        if (count == num_blocks) {
+            return start_block;
+        }
+    }
+
+    return -1; // Not enough contiguous blocks available
+}
+
+void print_file_system(int block_bitmap[]) {
+    printf("Block Bitmap:\n");
+    for (int i = 0; i < NUM_BLOCKS; i++) {
+        printf("%d ", block_bitmap[i]);
+        if (i == INODE_BLOCKS - 1) {
+            printf("\n");
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int block_bitmap[NUM_BLOCKS] = {0}; // Initialize all blocks as free
+
+    print_file_system(block_bitmap);
+
+    int file_size;
+    printf("Enter the size of the file (in KB): ");
+    scanf("%d", &file_size);
+
+    int num_blocks_required = file_size / BLOCK_SIZE;
+    if (file_size % BLOCK_SIZE != 0) {
+        num_blocks_required++;
+    }
+
+    int start_block = find_contiguous_blocks(block_bitmap, num_blocks_required);
+    if (start_block == -1) {
+        printf("Not enough contiguous blocks available. Exiting...\n");
+        return 0;
+    }
+
+    allocate_blocks(block_bitmap, start_block, num_blocks_required);
+    printf("Allocated blocks starting from block %d\n", start_block);
+    print_file_system(block_bitmap);
+
+    return 0;
+}
