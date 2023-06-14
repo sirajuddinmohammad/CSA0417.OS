@@ -1,0 +1,54 @@
+#include <stdio.h>
+
+#define NUM_PARTITIONS 6
+
+int memoryPartitions[NUM_PARTITIONS] = {300, 600, 350, 200, 750, 125};
+
+void worstFit(int processSize) {
+    int i, j, maxFragment = -1, maxFragmentIndex = -1;
+    bool allocated = false;
+
+    for (i = 0; i < NUM_PARTITIONS; i++) {
+        if (memoryPartitions[i] >= processSize) {
+            int fragment = memoryPartitions[i] - processSize;
+            if (fragment > maxFragment) {
+                maxFragment = fragment;
+                maxFragmentIndex = i;
+                allocated = true;
+            }
+        }
+    }
+
+    if (allocated) {
+        printf("Process of size %dkB is allocated to memory partition %d.\n", processSize, maxFragmentIndex + 1);
+        memoryPartitions[maxFragmentIndex] = -1; // Mark the partition as allocated
+    } else {
+        printf("Process of size %dkB cannot be allocated. No suitable partition found.\n", processSize);
+    }
+}
+
+int main() {
+    int processSizes[] = {115, 500, 358, 200, 375};
+    int i;
+
+    printf("Initial Memory Partitions:\n");
+    for (i = 0; i < NUM_PARTITIONS; i++) {
+        printf("Partition %d: %dkB\n", i + 1, memoryPartitions[i]);
+    }
+
+    printf("\nAllocation using Worst Fit:\n");
+    for (i = 0; i < sizeof(processSizes) / sizeof(processSizes[0]); i++) {
+        worstFit(processSizes[i]);
+    }
+
+    printf("\nFinal Memory Partitions:\n");
+    for (i = 0; i < NUM_PARTITIONS; i++) {
+        if (memoryPartitions[i] == -1) {
+            printf("Partition %d: Allocated\n", i + 1);
+        } else {
+            printf("Partition %d: %dkB\n", i + 1, memoryPartitions[i]);
+        }
+    }
+
+    return 0;
+}
